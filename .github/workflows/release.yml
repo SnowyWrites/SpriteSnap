@@ -25,42 +25,42 @@ jobs:
           path: SpriteSnap-windows-x64.exe
 
     linux:
-    runs-on: ubuntu-22.04   # older glibc = AppImage runs on more distros
-    steps:
-      - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@stable
-      - uses: Swatinem/rust-cache@v2
-      - name: Install build deps
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y cmake g++ libx11-dev libxext-dev libxft-dev \
-            libxinerama-dev libxcursor-dev libxrender-dev libxfixes-dev \
-            libpango1.0-dev libgl1-mesa-dev libglu1-mesa-dev
-      - run: cargo build --release
-      - name: Build AppImage
-        run: |
-          cat > spritesnap.desktop <<'EOF'
-          [Desktop Entry]
-          Type=Application
-          Name=SpriteSnap
-          Exec=SpriteSnap
-          Icon=spritesnap
-          Categories=Graphics;
-          EOF
-          mkdir -p AppDir/usr/share/icons/hicolor/48x48/apps
-          cp packaging/spritesnap.png AppDir/usr/share/icons/hicolor/48x48/apps/spritesnap.png
-          wget -q https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
-          chmod +x linuxdeploy-x86_64.AppImage
-          APPIMAGE_EXTRACT_AND_RUN=1 ./linuxdeploy-x86_64.AppImage \
-            --appdir AppDir \
-            --executable target/release/SpriteSnap \
-            --desktop-file spritesnap.desktop \
-            --output appimage
-          mv SpriteSnap*.AppImage SpriteSnap-linux-x86_64.AppImage
-      - uses: actions/upload-artifact@v4
-        with:
-          name: linux
-          path: SpriteSnap-linux-x86_64.AppImage
+        runs-on: ubuntu-22.04   # older glibc = AppImage runs on more distros
+        steps:
+        - uses: actions/checkout@v4
+        - uses: dtolnay/rust-toolchain@stable
+        - uses: Swatinem/rust-cache@v2
+        - name: Install build deps
+            run: |
+            sudo apt-get update
+            sudo apt-get install -y cmake g++ libx11-dev libxext-dev libxft-dev \
+                libxinerama-dev libxcursor-dev libxrender-dev libxfixes-dev \
+                libpango1.0-dev libgl1-mesa-dev libglu1-mesa-dev
+        - run: cargo build --release
+        - name: Build AppImage
+            run: |
+            cat > spritesnap.desktop <<'EOF'
+            [Desktop Entry]
+            Type=Application
+            Name=SpriteSnap
+            Exec=SpriteSnap
+            Icon=spritesnap
+            Categories=Graphics;
+            EOF
+            mkdir -p AppDir/usr/share/icons/hicolor/48x48/apps
+            cp packaging/spritesnap.png AppDir/usr/share/icons/hicolor/48x48/apps/spritesnap.png
+            wget -q https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
+            chmod +x linuxdeploy-x86_64.AppImage
+            APPIMAGE_EXTRACT_AND_RUN=1 ./linuxdeploy-x86_64.AppImage \
+                --appdir AppDir \
+                --executable target/release/SpriteSnap \
+                --desktop-file spritesnap.desktop \
+                --output appimage
+            mv SpriteSnap*.AppImage SpriteSnap-linux-x86_64.AppImage
+        - uses: actions/upload-artifact@v4
+            with:
+            name: linux
+            path: SpriteSnap-linux-x86_64.AppImage
 
   release:
     needs: [windows, linux]
