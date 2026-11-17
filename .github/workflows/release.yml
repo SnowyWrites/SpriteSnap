@@ -24,7 +24,7 @@ jobs:
           name: windows
           path: SpriteSnap-windows-x64.exe
 
-  linux:
+    linux:
     runs-on: ubuntu-22.04   # older glibc = AppImage runs on more distros
     steps:
       - uses: actions/checkout@v4
@@ -37,7 +37,7 @@ jobs:
             libxinerama-dev libxcursor-dev libxrender-dev libxfixes-dev \
             libpango1.0-dev libgl1-mesa-dev libglu1-mesa-dev
       - run: cargo build --release
-            - name: Build AppImage
+      - name: Build AppImage
         run: |
           cat > spritesnap.desktop <<'EOF'
           [Desktop Entry]
