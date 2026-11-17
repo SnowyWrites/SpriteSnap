@@ -505,14 +505,12 @@ fn main() {
             view.clone(), crop.clone(), recipe.clone(), painted.clone(),
         );
         open_btn.set_callback(move |_| {
-            let mut chooser =
-                dialog::NativeFileChooser::new(dialog::NativeFileChooserType::BrowseFile);
-            chooser.set_filter("Images\t*.{png,jpg,jpeg,webp}");
-            chooser.show();
-            let path = chooser.filename();
-            if path.as_os_str().is_empty() {
-                return;
-            } // cancelled
+            let Some(path) = rfd::FileDialog::new()
+            .add_filter("Images", &["png", "jpg", "jpeg", "webp"])
+            .pick_file()
+            else {
+                return; // cancelled
+            };
             match image::open(&path) {
                 Ok(img) => {
                     *history.borrow_mut() = History::default();
@@ -571,19 +569,17 @@ fn main() {
     // Save: the snapped sprite if there is one, otherwise the working image
     {
         let (result, source, scale_spinner) =
-            (result.clone(), source.clone(), scale_spinner.clone());
+        (result.clone(), source.clone(), scale_spinner.clone());
         save_btn.set_callback(move |_| {
             let img = result.borrow().clone().or_else(|| source.borrow().clone());
             if let Some(img) = img {
-                let mut chooser =
-                    dialog::NativeFileChooser::new(dialog::NativeFileChooserType::BrowseSaveFile);
-                chooser.set_filter("*.png");
-                chooser.set_option(dialog::NativeFileChooserOptions::SaveAsConfirm);
-                chooser.show();
-                let mut path = chooser.filename();
-                if path.as_os_str().is_empty() {
-                    return;
-                } // cancelled
+                let Some(mut path) = rfd::FileDialog::new()
+                .add_filter("PNG Image", &["png"])
+                .set_file_name("sprite.png")
+                .save_file()
+                else {
+                    return; // cancelled
+                };
                 if path.extension().is_none() {
                     path.set_extension("png");
                 }
@@ -594,8 +590,8 @@ fn main() {
                     imageops::resize(
                         &img,
                         img.width() * k,
-                        img.height() * k,
-                        imageops::FilterType::Nearest,
+                                     img.height() * k,
+                                     imageops::FilterType::Nearest,
                     )
                 };
                 if let Err(e) = out.save(&path) {
@@ -1318,16 +1314,14 @@ fn main() {
     // Load a .hex file (appends)
     {
         let (palettes, mut pal_choice, mut swatch) =
-            (palettes.clone(), pal_choice.clone(), swatch.clone());
+        (palettes.clone(), pal_choice.clone(), swatch.clone());
         hex_btn.set_callback(move |_| {
-            let mut chooser =
-                dialog::NativeFileChooser::new(dialog::NativeFileChooserType::BrowseFile);
-            chooser.set_filter("Palettes\t*.hex");
-            chooser.show();
-            let path = chooser.filename();
-            if path.as_os_str().is_empty() {
-                return;
-            }
+            let Some(path) = rfd::FileDialog::new()
+            .add_filter("Palettes", &["hex"])
+            .pick_file()
+            else {
+                return; // cancelled
+            };
             match std::fs::read_to_string(&path) {
                 Ok(text) => {
                     let colors = parse_hex(&text);
@@ -1335,9 +1329,9 @@ fn main() {
                         dialog::alert_default("No colors found in that file.");
                     } else {
                         let name = path
-                            .file_stem()
-                            .map(|s| clean_name(&s.to_string_lossy()))
-                            .unwrap_or_else(|| "custom".into());
+                        .file_stem()
+                        .map(|s| s.to_string_lossy().to_string())
+                        .unwrap_or_else(|| "custom".into());
                         add_palette(&palettes, &mut pal_choice, Palette { name, colors });
                         swatch.redraw();
                     }
