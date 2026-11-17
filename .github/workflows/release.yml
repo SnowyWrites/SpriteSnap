@@ -44,11 +44,11 @@ jobs:
           Type=Application
           Name=SpriteSnap
           Exec=SpriteSnap
-          Icon=spritesnap
+          Icon=icon
           Categories=Graphics;
           EOF
           mkdir -p AppDir/usr/share/icons/hicolor/48x48/apps
-          cp packaging/spritesnap.png AppDir/usr/share/icons/hicolor/48x48/apps/spritesnap.png
+          cp src/assets/icon.png AppDir/usr/share/icons/hicolor/48x48/apps/icon.png
           wget -q https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
           chmod +x linuxdeploy-x86_64.AppImage
           APPIMAGE_EXTRACT_AND_RUN=1 ./linuxdeploy-x86_64.AppImage \
