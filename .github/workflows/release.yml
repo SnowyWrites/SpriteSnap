@@ -24,15 +24,15 @@ jobs:
           name: windows
           path: SpriteSnap-windows-x64.exe
 
-  linux:                                    # 2 spaces
-    runs-on: ubuntu-22.04                   # 4
-    steps:                                  # 4
-      - uses: actions/checkout@v4           # dash at 6
+  linux:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
-      - name: Install build deps            # dash at 6, name at 8
-        run: |                              # 8
-          sudo apt-get update               # 10
+      - name: Install build deps
+        run: |
+          sudo apt-get update
           sudo apt-get install -y cmake g++ libx11-dev libxext-dev libxft-dev \
             libxinerama-dev libxcursor-dev libxrender-dev libxfixes-dev \
             libpango1.0-dev libgl1-mesa-dev libglu1-mesa-dev
