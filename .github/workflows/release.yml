@@ -37,7 +37,7 @@ jobs:
             libxinerama-dev libxcursor-dev libxrender-dev libxfixes-dev \
             libpango1.0-dev libgl1-mesa-dev libglu1-mesa-dev
       - run: cargo build --release
-      - name: Build AppImage
+            - name: Build AppImage
         run: |
           cat > spritesnap.desktop <<'EOF'
           [Desktop Entry]
@@ -47,13 +47,14 @@ jobs:
           Icon=spritesnap
           Categories=Graphics;
           EOF
+          mkdir -p AppDir/usr/share/icons/hicolor/48x48/apps
+          cp packaging/spritesnap.png AppDir/usr/share/icons/hicolor/48x48/apps/spritesnap.png
           wget -q https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
           chmod +x linuxdeploy-x86_64.AppImage
           APPIMAGE_EXTRACT_AND_RUN=1 ./linuxdeploy-x86_64.AppImage \
             --appdir AppDir \
             --executable target/release/SpriteSnap \
             --desktop-file spritesnap.desktop \
-            --icon-file packaging/icon.png \
             --output appimage
           mv SpriteSnap*.AppImage SpriteSnap-linux-x86_64.AppImage
       - uses: actions/upload-artifact@v4
