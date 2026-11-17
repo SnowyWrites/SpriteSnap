@@ -53,7 +53,7 @@ jobs:
             --appdir AppDir \
             --executable target/release/SpriteSnap \
             --desktop-file spritesnap.desktop \
-            --icon-file packaging/spritesnap.png \
+            --icon-file packaging/icon.png \
             --output appimage
           mv SpriteSnap*.AppImage SpriteSnap-linux-x86_64.AppImage
       - uses: actions/upload-artifact@v4
